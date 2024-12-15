@@ -20,10 +20,9 @@ Cocktail DB는 다양한 칵테일 정보를 체계적으로 저장하고, 이�
 ---
 
 ## 🛠️ 기술 스택
-- **Frontend**: HTML, CSS
+- **Frontend**: HTML, (CSS)
 - **Backend**: Flask (Python)
 - **Database**: SQLite
-- **Others**: Docker, Nginx, REST API
 
 ---
 
