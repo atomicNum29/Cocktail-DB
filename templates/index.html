@@ -8,6 +8,7 @@
 
 <body>
 	<h1>Cocktails</h1>
+
 	<!-- 모든 칵테일 보기 링크 -->
 	<a href="{{ url_for('index') }}"> ALL Cocktail </a> &emsp;
 	<!-- 칵테일 추가 페이지 링크 -->
@@ -15,7 +16,10 @@
 	<hr>
 	<!-- 검색 폼 -->
 	<form action="{{ url_for('index') }}" method="POST">
-		<input type="text" name="search_query" placeholder="Search cocktails..." required>
+		<input type="text" name="search_query" placeholder="Search by cocktail name"
+			value="{{ request.form.get('search_query', '') }}">
+		<input type="text" name="ingredient_query" placeholder="Search by ingredient"
+			value="{{ request.form.get('ingredient_query', '') }}">
 		<button type="submit">Search</button>
 	</form>
 

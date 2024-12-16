@@ -15,14 +15,36 @@ def get_db_connection():
 def index():
     conn = get_db_connection()
 
+   # 검색 조건 초기화
+    search_query = ''
+    ingredient_query = ''
+    cocktails = []
+
     # POST 요청: 검색어가 있을 때
     if request.method == 'POST':
-        search_query = request.form['search_query']
-        cocktails = conn.execute("""
-            SELECT * FROM Cocktail
-            WHERE name LIKE ?
-            ORDER BY name
-        """, ('%' + search_query + '%',)).fetchall()
+        # 사용자가 입력한 검색어
+        search_query = request.form.get('search_query', '').strip()
+        ingredient_query = request.form.get('ingredient_query', '').strip()
+
+        # 칵테일 이름으로 검색
+        if search_query:
+            cocktails = conn.execute("""
+                SELECT DISTINCT c.*
+                FROM Cocktail c
+                WHERE c.name LIKE ?
+                ORDER BY c.name
+            """, ('%' + search_query + '%',)).fetchall()
+
+        # 재료로 검색
+        elif ingredient_query:
+            cocktails = conn.execute("""
+                SELECT DISTINCT c.*
+                FROM Cocktail c
+                JOIN Cocktail_Ingredient ci ON c.id = ci.cocktail_id
+                JOIN Ingredient i ON ci.ingredient_id = i.id
+                WHERE i.name LIKE ?
+                ORDER BY c.name
+            """, ('%' + ingredient_query + '%',)).fetchall()
     else:
         # GET 요청: 모든 칵테일 가져오기
         cocktails = conn.execute("""
@@ -31,7 +53,8 @@ def index():
         """).fetchall()
 
     conn.close()
-    return render_template('index.html', cocktails=cocktails)
+
+    return render_template('index.html', cocktails=cocktails, search_query=search_query, ingredient_query=ingredient_query)
 
 # 칵테일 추가 기능
 @app.route('/add', methods=['GET', 'POST'])
