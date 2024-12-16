@@ -47,18 +47,27 @@ Cocktail DB는 다양한 칵테일 정보를 체계적으로 저장하고, 이�
     ```
 
 2. **의존성 설정**
-    - Python 가상환경 생성 및 활성화
+    - Python 가상환경 생성 및 활성화  
+	  맥 또는 리눅스
       ```bash
       python -m venv venv
       source venv/bin/activate
       ```
-    - 필요한 패키지 설치
+	  윈도우
+	  ```bash
+      python -m venv venv
+      source venv/Scripts/activate
+      ```
+    - 필요한 모듈 설치
       ```bash
-      pip install flask sqlite3
+      pip install flask
       ```
 
 3. **서버 실행**
-    - python app.py
+    - 실행
+      ```bash
+	  python app.py
+	  ```
 
 4. **애플리케이션 접속**
     - 웹 브라우저에서 `http://127.0.0.1:5000` 접속
