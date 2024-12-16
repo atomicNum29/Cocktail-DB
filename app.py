@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 import sqlite3
 
 app = Flask(__name__)
@@ -31,6 +31,24 @@ def cocktail_detail(cocktail_id):
     """, (cocktail_id,)).fetchall()
     conn.close()
     return render_template('cocktail_detail.html', cocktail=cocktail, ingredients=ingredients)
+
+@app.route('/delete/<int:cocktail_id>', methods=['POST'])
+def delete_cocktail(cocktail_id):
+    # 데이터베이스 연결
+    conn = get_db_connection()
+    
+    # 삭제 작업
+    try:
+        conn.execute("DELETE FROM Cocktail WHERE id = ?", (cocktail_id,))
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        print(f"Error deleting cocktail: {e}")
+    finally:
+        conn.close()
+
+    # 메인 페이지로 리다이렉션
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.debug = True
