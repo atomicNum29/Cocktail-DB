@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Edit {{ cocktail['name'] }}</title>
+</head>
+
+<body>
+	<h1>Edit Cocktail: {{ cocktail['name'] }}</h1>
+	<form action="{{ url_for('edit_cocktail', cocktail_id=cocktail['id']) }}" method="POST">
+		<label for="name">Name:</label><br>
+		<input type="text" id="name" name="name" value="{{ cocktail['name'] }}" required><br><br>
+
+		<label for="glass">Glass:</label><br>
+		<input type="text" id="glass" name="glass" value="{{ cocktail['glass'] }}"><br><br>
+
+		<label for="recipe">Recipe:</label><br>
+		<textarea id="recipe" name="recipe" rows="5" required>{{ cocktail['recipe'] }}</textarea><br><br>
+
+		<label for="image">Image URL:</label><br>
+		<input type="text" id="image" name="image" value="{{ cocktail['image'] }}" placeholder="Enter image URL"><br><br>
+
+		<button type="submit">Save Changes</button>
+		<a href="{{ url_for('cocktail_detail', cocktail_id=cocktail['id']) }}">Cancel</a>
+	</form>
+</body>
+
+</html>
