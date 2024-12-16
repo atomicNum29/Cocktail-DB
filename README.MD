@@ -15,10 +15,10 @@ Cocktail DB는 다양한 칵테일 정보를 체계적으로 저장하고, 이�
 ```
 /project-root  
 ├── DB
-│   ├── DB-schema.png       # 데이터베이스 스키마 그림  
 │   ├── ER-diagram.png      # ER 다이어그램 (png)  
 │   ├── ER-diagram.svg      # ER 다이어그램 (svg)  
-│   ├── SQL-schema-code.sql # SQL 스키마 코드  
+│   ├── DB-schema.png       # 데이터베이스 스키마 그림  
+│   ├── SQL-schema-code.sql # SQL 스키마 코드 (최종 데이터베이스 형태)  
 │   └── cocktail-DB.db      # 데이터베이스 파일  
 └── README.MD               # 프로젝트 설명 문서  
 ```
