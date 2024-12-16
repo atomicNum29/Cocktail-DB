@@ -62,6 +62,10 @@ def edit_cocktail(cocktail_id):
         glass = request.form['glass']
         recipe = request.form['recipe']
         image = request.form['image']
+        
+        # 재료 업데이트
+        ingredients = request.form.getlist('ingredients[]')
+        amounts = request.form.getlist('amounts[]')
 
         # 데이터베이스 업데이트
         try:
@@ -70,6 +74,28 @@ def edit_cocktail(cocktail_id):
                 SET name = ?, glass = ?, recipe = ?, image = ?
                 WHERE id = ?
             """, (name, glass, recipe, image, cocktail_id))
+            
+            # 기존 재료 삭제
+            conn.execute("DELETE FROM Cocktail_Ingredient WHERE cocktail_id = ?", (cocktail_id,))
+
+            # 새 재료 삽입
+            for ingredient_name, amount in zip(ingredients, amounts):
+                if ingredient_name.strip():  # 재료 이름이 비어있지 않은 경우만 처리
+                    # Ingredient ID 가져오기 또는 추가
+                    cursor = conn.execute("SELECT id FROM Ingredient WHERE name = ?", (ingredient_name,))
+                    ingredient_id = cursor.fetchone()
+                    if not ingredient_id:
+                        cursor = conn.execute("INSERT INTO Ingredient (name) VALUES (?)", (ingredient_name,))
+                        ingredient_id = cursor.lastrowid
+                    else:
+                        ingredient_id = ingredient_id[0]
+
+                    # Cocktail_Ingredient 삽입
+                    conn.execute("""
+                        INSERT INTO Cocktail_Ingredient (cocktail_id, ingredient_id, amount)
+                        VALUES (?, ?, ?)
+                    """, (cocktail_id, ingredient_id, amount.strip() if amount else None))
+
             conn.commit()
         except Exception as e:
             conn.rollback()
@@ -82,12 +108,18 @@ def edit_cocktail(cocktail_id):
 
     # GET 요청: 현재 데이터를 가져옴
     cocktail = conn.execute("SELECT * FROM Cocktail WHERE id = ?", (cocktail_id,)).fetchone()
+    ingredients = conn.execute("""
+        SELECT i.name, ci.amount
+        FROM Ingredient i
+        JOIN Cocktail_Ingredient ci ON i.id = ci.ingredient_id
+        WHERE ci.cocktail_id = ?
+    """, (cocktail_id,)).fetchall()
     conn.close()
 
     if cocktail is None:
         return "Cocktail not found", 404
 
-    return render_template('edit_cocktail.html', cocktail=cocktail)
+    return render_template('edit_cocktail.html', cocktail=cocktail, ingredients=ingredients)
 
 if __name__ == '__main__':
     app.debug = True
