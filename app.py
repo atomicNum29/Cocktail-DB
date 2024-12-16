@@ -14,7 +14,7 @@ def get_db_connection():
 @app.route('/')
 def index():
     conn = get_db_connection()
-    cocktails = conn.execute('SELECT * FROM Cocktail').fetchall()
+    cocktails = conn.execute('SELECT * FROM Cocktail ORDER BY name').fetchall()
     conn.close()
     return render_template('index.html', cocktails=cocktails)
 
