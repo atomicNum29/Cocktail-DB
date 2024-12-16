@@ -18,6 +18,55 @@ def index():
     conn.close()
     return render_template('index.html', cocktails=cocktails)
 
+# 칵테일 추가 기능
+@app.route('/add', methods=['GET', 'POST'])
+def add_cocktail():
+    conn = get_db_connection()
+
+    if request.method == 'POST':
+        # 사용자 입력 데이터 가져오기
+        name = request.form['name']
+        glass = request.form['glass']
+        recipe = request.form['recipe']
+        image = request.form['image']
+        ingredients = request.form.getlist('ingredients[]')
+        amounts = request.form.getlist('amounts[]')
+
+        # Cocktail 테이블에 추가
+        cursor = conn.execute("""
+            INSERT INTO Cocktail (name, glass, recipe, image)
+            VALUES (?, ?, ?, ?)
+        """, (name, glass, recipe, image))
+        cocktail_id = cursor.lastrowid
+
+        # Ingredient와 Cocktail_Ingredient 테이블 업데이트
+        for ingredient_name, amount in zip(ingredients, amounts):
+            if ingredient_name.strip():  # 재료 이름이 비어있지 않으면 처리
+                # Ingredient ID 가져오기 또는 추가
+                cursor = conn.execute("SELECT id FROM Ingredient WHERE name = ?", (ingredient_name,))
+                ingredient_id = cursor.fetchone()
+                if not ingredient_id:
+                    cursor = conn.execute("INSERT INTO Ingredient (name) VALUES (?)", (ingredient_name,))
+                    ingredient_id = cursor.lastrowid
+                else:
+                    ingredient_id = ingredient_id[0]
+
+                # Cocktail_Ingredient 삽입
+                conn.execute("""
+                    INSERT INTO Cocktail_Ingredient (cocktail_id, ingredient_id, amount)
+                    VALUES (?, ?, ?)
+                """, (cocktail_id, ingredient_id, amount.strip() if amount else None))
+
+        # 데이터 저장 및 종료
+        conn.commit()
+        conn.close()
+
+        # 새로 추가된 칵테일의 상세 페이지로 리다이렉션
+        return redirect(url_for('cocktail_detail', cocktail_id=cocktail_id))
+
+    conn.close()
+    return render_template('add_cocktail.html')
+
 # 특정 칵테일의 상세 정보
 @app.route('/cocktail/<int:cocktail_id>')
 def cocktail_detail(cocktail_id):

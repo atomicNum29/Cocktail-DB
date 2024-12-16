@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Add New Cocktail</title>
+	<script>
+		// 동적으로 재료 추가/삭제 기능
+		document.addEventListener('DOMContentLoaded', function () {
+			document.getElementById('add-ingredient').addEventListener('click', function () {
+				const container = document.getElementById('ingredients');
+				const group = document.createElement('div');
+				group.className = 'ingredient-group';
+				group.innerHTML = `
+                    <input type="text" name="ingredients[]" placeholder="Ingredient Name" required>
+                    <input type="text" name="amounts[]" placeholder="Amount (e.g., 50ml)" required>
+                    <button type="button" class="remove-ingredient">Remove</button>
+                `;
+				container.appendChild(group);
+			});
+
+			document.getElementById('ingredients').addEventListener('click', function (e) {
+				if (e.target.classList.contains('remove-ingredient')) {
+					e.target.parentElement.remove();
+				}
+			});
+		});
+	</script>
+</head>
+
+<body>
+	<h1>Add a New Cocktail</h1>
+	<form action="{{ url_for('add_cocktail') }}" method="POST">
+		<label for="name">Cocktail Name:</label><br>
+		<input type="text" id="name" name="name" placeholder="Enter cocktail name" required><br><br>
+
+		<label for="glass">Glass:</label><br>
+		<input type="text" id="glass" name="glass" placeholder="Enter glass type"><br><br>
+
+		<label for="recipe">Recipe:</label><br>
+		<textarea id="recipe" name="recipe" rows="5" placeholder="Enter recipe" required></textarea><br><br>
+
+		<label for="image">Image URL:</label><br>
+		<input type="text" id="image" name="image" placeholder="Enter image URL"><br><br>
+
+		<h2>Ingredients</h2>
+		<div id="ingredients">
+			<div class="ingredient-group">
+				<input type="text" name="ingredients[]" placeholder="Ingredient Name" required>
+				<input type="text" name="amounts[]" placeholder="Amount (e.g., 50ml)" required>
+			</div>
+		</div>
+		<button type="button" id="add-ingredient">Add Ingredient</button><br><br>
+
+		<button type="submit">Save Cocktail</button>
+	</form>
+</body>
+
+</html>
