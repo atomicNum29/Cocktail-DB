@@ -7,9 +7,20 @@
 </head>
 
 <body>
-	<h1>All Cocktails</h1>
+	<h1>Cocktails</h1>
+	<!-- 모든 칵테일 보기 링크 -->
+	<a href="{{ url_for('index') }}"> ALL Cocktail </a> &emsp;
+	<!-- 칵테일 추가 페이지 링크 -->
 	<a href="{{ url_for('add_cocktail') }}"> add Cocktail </a>
-	<br />
+	<hr>
+	<!-- 검색 폼 -->
+	<form action="{{ url_for('index') }}" method="POST">
+		<input type="text" name="search_query" placeholder="Search cocktails..." required>
+		<button type="submit">Search</button>
+	</form>
+
+	<!-- 칵테일 리스트 -->
+	{% if cocktails %}
 	<ul>
 		{% for cocktail in cocktails %}
 		<li>
@@ -19,6 +30,9 @@
 		</li>
 		{% endfor %}
 	</ul>
+	{% else %}
+	<p>No cocktails found for "{{ request.form.get('search_query', '') }}".</p>
+	{% endif %}
 </body>
 
 </html>

@@ -11,10 +11,25 @@ def get_db_connection():
     return conn
 
 # 메인 페이지: 칵테일 리스트
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     conn = get_db_connection()
-    cocktails = conn.execute('SELECT * FROM Cocktail ORDER BY name').fetchall()
+
+    # POST 요청: 검색어가 있을 때
+    if request.method == 'POST':
+        search_query = request.form['search_query']
+        cocktails = conn.execute("""
+            SELECT * FROM Cocktail
+            WHERE name LIKE ?
+            ORDER BY name
+        """, ('%' + search_query + '%',)).fetchall()
+    else:
+        # GET 요청: 모든 칵테일 가져오기
+        cocktails = conn.execute("""
+            SELECT * FROM Cocktail
+            ORDER BY name
+        """).fetchall()
+
     conn.close()
     return render_template('index.html', cocktails=cocktails)
 
