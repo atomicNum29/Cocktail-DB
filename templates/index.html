@@ -11,7 +11,9 @@
 	<ul>
 		{% for cocktail in cocktails %}
 		<li>
-			{{ cocktail['name'] }}
+			<a href="{{ url_for('cocktail_detail', cocktail_id=cocktail['id']) }}">
+				{{ cocktail['name'] }}
+			</a>
 		</li>
 		{% endfor %}
 	</ul>

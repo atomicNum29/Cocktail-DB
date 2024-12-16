@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{ cocktail['name'] }} - Details</title>
+</head>
+
+<body>
+	<header>
+		<h1>{{ cocktail['name'] }}</h1>
+		<a href="{{ url_for('index') }}">← Back to Cocktail List</a>
+	</header>
+
+	<main>
+		<!-- 칵테일 이미지 -->
+		{% if cocktail['image'] %}
+		<img src="{{ cocktail['image'] }}" alt="{{ cocktail['name'] }}" style="max-width: 300px; height: auto;">
+		{% else %}
+		<p>No image available</p>
+		{% endif %}
+
+		<!-- 칵테일 세부 정보 -->
+		<section>
+			<h2>Details</h2>
+			<p><strong>Glass:</strong> {{ cocktail['glass'] or 'N/A' }}</p>
+			<p><strong>Recipe:</strong></p>
+			<p>{{ cocktail['recipe'] or 'No recipe provided.' }}</p>
+		</section>
+
+		<!-- 재료 목록 -->
+		<section>
+			<h2>Ingredients</h2>
+			{% if ingredients %}
+			<ul>
+				{% for ingredient in ingredients %}
+				<li>
+					{{ ingredient['name'] }}{% if ingredient['amount'] %} - {{ ingredient['amount'] }}{% endif %}
+				</li>
+				{% endfor %}
+			</ul>
+			{% else %}
+			<p>No ingredients listed for this cocktail.</p>
+			{% endif %}
+		</section>
+	</main>
+</body>
+
+</html>
